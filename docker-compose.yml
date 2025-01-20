@@ -1,0 +1,94 @@
+services:
+  mysql:
+    build: ./docker/mysql
+    image: custom-mysql:latest
+    container_name: mysql_container
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root_password
+      MYSQL_DATABASE: app_db
+      MYSQL_USER: user
+      MYSQL_PASSWORD: password
+    volumes:
+      - mysql_data:/var/lib/mysql  # 데이터 지속성 유지
+    networks:
+      - internal                   # 내부 네트워크 연결
+
+  rabbitmq:
+    build: ./docker/rabbitmq
+    image: custom-rabbitmq:latest
+    container_name: rabbitmq_container
+    restart: always
+    environment:
+      RABBITMQ_DEFAULT_USER: user
+      RABBITMQ_DEFAULT_PASS: password
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq  # 데이터 지속성 유지
+    networks:
+      - internal                   # 내부 네트워크 연결
+
+  redis:
+    build: ./docker/redis
+    image: custom-redis:latest
+    container_name: redis_container
+    restart: always
+    volumes:
+      - redis_data:/data  # 데이터 지속성 유지
+    networks:
+      - internal                   # 내부 네트워크 연결
+
+  backend:
+    build:
+      context: ./backend/ttabong  # 🔥 빌드 컨텍스트 명확하게 지정
+      dockerfile: Dockerfile       # 🔥 사용할 Dockerfile 명시
+    image: custom-backend:latest
+    container_name: backend_container
+    restart: always
+    depends_on:
+      - mysql
+      - redis
+      - rabbitmq
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/app_db
+      SPRING_DATASOURCE_USERNAME: user
+      SPRING_DATASOURCE_PASSWORD: password
+      SPRING_REDIS_HOST: redis
+      SPRING_RABBITMQ_HOST: rabbitmq
+    networks:
+    - internal
+  
+  frontend:
+    build:
+      context: ./frontend/ttabong
+      dockerfile: Dockerfile
+    image: frontend_builder
+    container_name: frontend_builder
+    networks:
+      - internal
+
+  nginx:
+    build:
+      context: ./docker/nginx
+      dockerfile: Dockerfile
+    image: custom-nginx:latest
+    container_name: nginx_proxy
+    restart: always
+    depends_on:
+      - frontend
+      - backend
+    ports:
+      - "80:80"                    # HTTP 포트 공개
+    networks:
+      - external                   # 외부 네트워크 연결 (사용자 접근 가능)
+      - internal                   # 내부 네트워크 연결 (Backend, Frontend 연결)
+
+networks:
+  internal:
+    driver: bridge                 # 내부 네트워크
+  external:
+    driver: bridge                 # 외부 네트워크
+
+volumes:
+  mysql_data:
+  rabbitmq_data:
+  redis_data:
