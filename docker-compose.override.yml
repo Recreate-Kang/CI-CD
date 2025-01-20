@@ -1,0 +1,9 @@
+version: "3.8"
+services:
+  backend:
+    profiles:
+      - disable
+  frontend:
+    profiles:
+      - disable
+# docker-compose --profile disable up -d

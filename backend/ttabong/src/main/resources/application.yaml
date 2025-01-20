@@ -1,0 +1,19 @@
+spring:
+    application:
+        name: ttabong
+
+    datasource:
+        url: jdbc:mysql://${SPRING_DATASOURCE_URL:mysql:3306/app_db}
+        username: ${SPRING_DATASOURCE_USERNAME:user}
+        password: ${SPRING_DATASOURCE_PASSWORD:password}
+        driver-class-name: com.mysql.cj.jdbc.Driver
+
+    jpa:
+        hibernate:
+            ddl-auto: update
+            show-sql: true
+
+    data:
+        redis:
+            host: ${SPRING_REDIS_HOST:redis}
+            port: ${SPRING_REDIS_PORT:6379}  # ?? ?? ??? ??

@@ -11,3 +11,6 @@ RUN npm run build
 
 # 빌드 결과물을 공유 폴더에 복사
 RUN mkdir -p /output && cp -r dist /output/
+
+# 빌드 실행
+CMD ["sh", "-c", "exec npm run serve"]

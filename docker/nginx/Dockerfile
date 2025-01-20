@@ -4,7 +4,7 @@ WORKDIR /usr/share/nginx/html
 
 # 기존 Nginx 기본 설정 제거 후 새로운 설정 추가
 RUN rm -rf ./*
-COPY nginx.conf /etc/nginx/nginx.conf
+COPY ./nginx.conf /etc/nginx/nginx.conf
 
 # Vue 빌드 결과물 복사
 COPY --from=frontend_builder /output ./
