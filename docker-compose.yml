@@ -5,12 +5,13 @@ services:
     container_name: mysql_container
     restart: always
     environment:
-      MYSQL_ROOT_PASSWORD: root_password
-      MYSQL_DATABASE: app_db
-      MYSQL_USER: user
-      MYSQL_PASSWORD: password
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: ddabong_db
+      MYSQL_USER: ddabong
+      MYSQL_PASSWORD: 707
     ports:
       - "3307:3306"
+    command: --bind-address=0.0.0.0
 
   redis:
     build: ./docker/redis
