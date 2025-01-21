@@ -1,19 +1,89 @@
 spring:
     application:
         name: ttabong
-
     datasource:
-        url: jdbc:mysql://${SPRING_DATASOURCE_URL:mysql:3306/app_db}
-        username: ${SPRING_DATASOURCE_USERNAME:user}
-        password: ${SPRING_DATASOURCE_PASSWORD:password}
         driver-class-name: com.mysql.cj.jdbc.Driver
-
     jpa:
-        hibernate:
-            ddl-auto: update
-            show-sql: true
+        show-sql: true
+        properties:
+            hibernate:
+                format_sql: true
+    logging:
+        file:
+            name: logs/common.log
+server:
+    port: 8080
 
+---
+spring:
+    config:
+        activate:
+            on-profile: default
+    datasource:
+        url: jdbc:mysql://localhost:3307/app_db
+        username: local_user
+        password: local_password
     data:
         redis:
-            host: ${SPRING_REDIS_HOST:redis}
-            port: ${SPRING_REDIS_PORT:6379}  # ?? ?? ??? ??
+            host: localhost
+            port: 6379
+    rabbitmq:
+        host: local-rabbitmq
+        port: 5672
+    logging:
+        level:
+            org.springframework: DEBUG
+        file:
+            name: logs/local.log
+
+---
+spring:
+    config:
+        activate:
+            on-profile: dev
+    datasource:
+        url: jdbc:mysql://mysql:3306/app_db
+        username: user
+        password: password
+    data:
+        redis:
+            host: redis
+            port: 6379
+    rabbitmq:
+        host: rabbitmq
+        port: 5672
+    logging:
+        level:
+            org.springframework: DEBUG
+        file:
+            name: logs/dev.log
+
+---
+spring:
+    config:
+        activate:
+            on-profile: prod
+    datasource:
+        url: jdbc:mysql://mysql:3306/app_db
+        username: prod_user
+        password: prod_password
+    data:
+        redis:
+            host: redis
+            port: 6379
+    rabbitmq:
+        host: rabbitmq
+        port: 5672
+    jpa:
+        hibernate:
+            ddl-auto: none # ?? ????? ??? ?? ??
+    logging:
+        level:
+            org.springframework: INFO
+        file:
+            name: logs/prod.log
+    management:
+        endpoints:
+            web:
+                exposure:
+                    include: health,info

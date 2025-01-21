@@ -19,6 +19,7 @@ public class RedisConfig {
 
     @Bean
     LettuceConnectionFactory lettuceConnectionFactory() {
+        System.out.println(host +"----------------------------------------------------------------"+ port);
         return new LettuceConnectionFactory(new RedisStandaloneConfiguration(host, port));
     }
 
