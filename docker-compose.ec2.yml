@@ -51,17 +51,16 @@ services:
     container_name: backend_container
     environment:
       SPRING_PROFILES_ACTIVE: prod
-    restart: always
-    depends_on:
-      - mysql
-      - redis
-      - rabbitmq
-    environment:
       SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/app_db
       SPRING_DATASOURCE_USERNAME: user
       SPRING_DATASOURCE_PASSWORD: password
       SPRING_REDIS_HOST: redis
       SPRING_RABBITMQ_HOST: rabbitmq
+    restart: always
+    depends_on:
+      - mysql
+      - redis
+      - rabbitmq
     networks:
       - internal
 
