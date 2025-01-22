@@ -5,7 +5,10 @@ spring:
     datasource:
         driver-class-name: com.mysql.cj.jdbc.Driver
     jpa:
+        database-platform: org.hibernate.dialect.MySQL8Dialect
         show-sql: true
+        hibernate:
+            ddl-auto: update
         properties:
             hibernate:
                 format_sql: true
@@ -23,16 +26,18 @@ spring:
         activate:
             on-profile: default
     datasource:
-        url: jdbc:mysql://localhost:3307/app_db
-        username: local_user
-        password: local_password
+        url: jdbc:mysql://localhost:3307/ddabong_db
+        username: ddabong
+        password: 707
     data:
         redis:
             host: localhost
             port: 6379
     rabbitmq:
-        host: local-rabbitmq
+        host: localhost
         port: 5672
+        username: user
+        password: password
     logging:
         level:
             org.springframework: DEBUG
@@ -45,7 +50,7 @@ spring:
         activate:
             on-profile: dev
     datasource:
-        url: jdbc:mysql://mysql:3306/app_db
+        url: jdbc:mysql://mysql:3306/ddabong_db
         username: user
         password: password
     data:
@@ -67,7 +72,7 @@ spring:
         activate:
             on-profile: prod
     datasource:
-        url: jdbc:mysql_container://mysql:3306/app_db
+        url: jdbc:mysql_container://mysql:3306/ddabong_db
         username: prod_user
         password: prod_password
     data:

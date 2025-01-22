@@ -1,27 +1,32 @@
-# 1️⃣ React/Vite 빌드
+# 🔹 1단계: React 빌드 (builder 스테이지)
 FROM node:18 AS builder
 WORKDIR /app
 
-# 패키지 파일 복사 후 의존성 설치
-COPY package.json package-lock.json ./
-RUN npm install --frozen-lockfile
+# package.json과 package-lock.json만 먼저 복사 후 의존성 설치
+COPY package*.json ./
+RUN npm install
 
-# 전체 소스 코드 복사 및 빌드 실행
+# 전체 프로젝트 복사
 COPY . .
-RUN npm run build && ls -al dist  # 🔥 dist 폴더가 생성되었는지 확인
 
-# 2️⃣ Nginx로 정적 파일 서빙
-FROM nginx:1.21.3-alpine
+# React 빌드 실행
+RUN npm run build
+
+# 빌드 결과 확인
+RUN ls -l build  
+
+# 🔹 2단계: Nginx 스테이지
+FROM nginx:alpine
 WORKDIR /usr/share/nginx/html
-RUN rm -rf ./*
-COPY --from=builder /app/dist .  # 🔥 dist 폴더를 복사하는 부분 수정
 
-# 기존 Nginx 기본 설정 제거 후 정적 파일 복사
-RUN rm -rf ./*
-COPY --from=builder /app/dist .  # 🔥 React/Vite 빌드 결과물을 Nginx 루트로 복사
+# ✅ 빌드된 `build` 폴더를 제대로 복사
+COPY --from=builder /app/build/ /usr/share/nginx/html 
 
-# Nginx 설정 파일 복사
+# nginx default 설정 삭제
+RUN rm /etc/nginx/conf.d/default.conf
+
+# custom 설정파일을 컨테이너 내부로 복사한다.
 COPY nginx.conf /etc/nginx/nginx.conf
 
-# 컨테이너 실행 시 Nginx 실행
+# Nginx 실행
 CMD ["nginx", "-g", "daemon off;"]
