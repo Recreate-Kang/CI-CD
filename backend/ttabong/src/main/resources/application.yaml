@@ -67,15 +67,15 @@ spring:
         activate:
             on-profile: prod
     datasource:
-        url: jdbc:mysql://mysql:3306/app_db
+        url: jdbc:mysql_container://mysql:3306/app_db
         username: prod_user
         password: prod_password
     data:
         redis:
-            host: redis
+            host: redis_container
             port: 6379
     rabbitmq:
-        host: rabbitmq
+        host: rabbitmq_container
         port: 5672
     jpa:
         hibernate:

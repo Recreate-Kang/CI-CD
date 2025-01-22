@@ -42,11 +42,11 @@ services:
     restart: always
     ports:
       - "80:80" # HTTP 포트 공개
-  gitlab-runner:
-    build: 
-      context: ./docker/gitlab-runner
-      dockerfile: Dockerfile
-    image: local-gitlab-runner:local
-    container_name: gitlab-runner
-    restart: always
+  #gitlab-runner:
+  #  build: 
+  #    context: ./docker/gitlab-runner
+  #    dockerfile: Dockerfile
+  #  image: local-gitlab-runner:local
+  #  container_name: gitlab-runner
+  #  restart: always
     

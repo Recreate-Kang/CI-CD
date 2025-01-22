@@ -11,8 +11,8 @@ services:
       MYSQL_PASSWORD: password
     volumes:
       - mysql_data:/var/lib/mysql # 데이터 지속성 유지
-    port:
-      - 3306:3306
+    ports:
+      - "3306:3306"
     networks:
       - internal # 내부 네트워크 연결
 
@@ -26,8 +26,9 @@ services:
       RABBITMQ_DEFAULT_PASS: password
     volumes:
       - rabbitmq_data:/var/lib/rabbitmq # 데이터 지속성 유지
-    port:
-      - 5672:5672, 15672:15672
+    ports:
+      - "5672:5672"
+      - "15672:15672"
     networks:
       - internal # 내부 네트워크 연결
 
@@ -38,8 +39,8 @@ services:
     restart: always
     volumes:
       - redis_data:/data # 데이터 지속성 유지
-    port:
-      - 6379:6379
+    ports:
+      - "6379:6379"
     networks:
       - internal # 내부 네트워크 연결
 
@@ -51,16 +52,13 @@ services:
     container_name: backend_container
     environment:
       SPRING_PROFILES_ACTIVE: prod
-      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/app_db
-      SPRING_DATASOURCE_USERNAME: user
-      SPRING_DATASOURCE_PASSWORD: password
-      SPRING_REDIS_HOST: redis
-      SPRING_RABBITMQ_HOST: rabbitmq
     restart: always
     depends_on:
       - mysql
       - redis
       - rabbitmq
+    ports:
+      - "8080:8080"
     networks:
       - internal
 
@@ -70,6 +68,8 @@ services:
       dockerfile: Dockerfile
     image: frontend_builder
     container_name: frontend_builder
+    ports:
+      - "3000:3000"
     networks:
       - internal
 
