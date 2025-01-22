@@ -59,8 +59,8 @@ services:
       - rabbitmq
     networks:
       - internal
-    ports:
-      - "8080:8080" # 외부에 직접 공개되지 않고 내부 네트워크에서만 접근 가능
+    expose:
+      - "8080" # 외부에 직접 공개되지 않고 내부 네트워크에서만 접근 가능
 
   #frontend:
   #  build:

@@ -9,8 +9,7 @@ const StatusCheck = () => {
     try {
       const response = await fetch("http://localhost:80/api/health");
       if (!response.ok) throw new Error(`HTTP Error: ${response.status}`);
-      const data = await response.json();
-      setStatus(`✅ 서버 응답 `);
+      setStatus(`✅ 서버 온라인`);
     } catch (error) {
       setStatus(`❌ 연결 실패 `);
     }
