@@ -1,4 +1,4 @@
-package com.ttabong.redis.java.winter.com.vo;
+package com.ttabong.redis.redis.vo;
 
 import lombok.Data;
 

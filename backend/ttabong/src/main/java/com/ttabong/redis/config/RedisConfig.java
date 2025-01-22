@@ -1,6 +1,6 @@
-package com.ttabong.redis.java.winter.com.config;
+package com.ttabong.redis.config;
 
-import com.ttabong.redis.java.winter.com.vo.KeyWord;
+import com.ttabong.redis.redis.vo.KeyWord;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

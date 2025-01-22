@@ -2,7 +2,7 @@ services:
   mysql:
     build: ./docker/mysql
     image: custom-mysql:latest
-    container_name: mysql_container
+    container_name: mysql_deploy
     restart: always
     environment:
       MYSQL_ROOT_PASSWORD: root_password
@@ -19,7 +19,7 @@ services:
   rabbitmq:
     build: ./docker/rabbitmq
     image: custom-rabbitmq:latest
-    container_name: rabbitmq_container
+    container_name: rabbitmq_deploy
     restart: always
     environment:
       RABBITMQ_DEFAULT_USER: user
@@ -35,7 +35,7 @@ services:
   redis:
     build: ./docker/redis
     image: custom-redis:latest
-    container_name: redis_container
+    container_name: redis_deploy
     restart: always
     volumes:
       - redis_data:/data
@@ -49,7 +49,7 @@ services:
       context: ./backend/ttabong
       dockerfile: Dockerfile
     image: custom-backend:latest
-    container_name: backend_container
+    container_name: backend_deploy
     environment:
       SPRING_PROFILES_ACTIVE: prod
     restart: always
@@ -62,34 +62,35 @@ services:
     expose:
       - "8080" # 외부에 직접 공개되지 않고 내부 네트워크에서만 접근 가능
 
-  frontend:
-    build:
-      context: ./frontend/ttabong
-      dockerfile: Dockerfile
-    image: frontend_builder
-    container_name: frontend_builder
-    networks:
-      - internal
-    expose:
-      - "3000" # 외부 접근 차단, 내부에서만 접근 가능
+  #frontend:
+  #  build:
+  #    context: ./frontend/ttabong
+  #    dockerfile: Dockerfile
+  #  image: frontend_builder
+  #  container_name: frontend_deploy
+  #  networks:
+  #    - internal
+  #  expose:
+  #    - "3000" # 외부 접근 차단, 내부에서만 접근 가능
 
   nginx:
     build:
-      context: ./docker/nginx
+      context: ./frontend/ttabong
       dockerfile: Dockerfile
     image: custom-nginx:latest
-    container_name: nginx_proxy
+    container_name: nginx_deploy
     volumes:
       - ./docker/nginx/local_nginx.conf:/etc/nginx/nginx.conf:ro
     restart: always
     depends_on:
-      - frontend
+      #  - frontend
       - backend
     ports:
       - "80:80" # 외부에서 HTTP 접근 허용
       - "443:443" # 외부에서 HTTPS 접근 허용 (필요 시)
     networks:
       - internal # 내부 네트워크 연결 (Backend, Frontend 연결)
+      - external
 
 networks:
   internal:

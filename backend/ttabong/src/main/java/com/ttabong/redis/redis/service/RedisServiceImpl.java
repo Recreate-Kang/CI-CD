@@ -1,7 +1,5 @@
-package com.ttabong.redis.java.winter.com.redis.service;
+package com.ttabong.redis.redis.service;
 
-import com.ttabong.redis.java.winter.com.vo.KeyWord;
-import org.springframework.data.redis.connection.stream.MapRecord;
 import org.springframework.data.redis.connection.stream.ReadOffset;
 import org.springframework.data.redis.connection.stream.RecordId;
 import org.springframework.data.redis.connection.stream.StreamOffset;
@@ -10,8 +8,6 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ZSetOperations;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Set;
 
 @Service

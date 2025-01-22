@@ -1,21 +1,27 @@
-# React 빌드 컨테이너 (Node.js 18 사용)
+# 1️⃣ React/Vite 빌드
 FROM node:18 AS builder
-
-# 작업 디렉토리 설정
 WORKDIR /app
 
-# 패키지 설치를 위해 package.json, package-lock.json 복사
+# 패키지 파일 복사 후 의존성 설치
 COPY package.json package-lock.json ./
-RUN npm install
+RUN npm install --frozen-lockfile
 
-# 전체 소스 코드 복사
+# 전체 소스 코드 복사 및 빌드 실행
 COPY . .
+RUN npm run build && ls -al dist  # 🔥 dist 폴더가 생성되었는지 확인
 
-# React/Vite 빌드 실행
-RUN npm run build
+# 2️⃣ Nginx로 정적 파일 서빙
+FROM nginx:1.21.3-alpine
+WORKDIR /usr/share/nginx/html
+RUN rm -rf ./*
+COPY --from=builder /app/dist .  # 🔥 dist 폴더를 복사하는 부분 수정
 
-# 빌드 결과물을 저장할 디렉토리 생성 후 복사
-RUN mkdir -p /output && cp -r dist /output/
+# 기존 Nginx 기본 설정 제거 후 정적 파일 복사
+RUN rm -rf ./*
+COPY --from=builder /app/dist .  # 🔥 React/Vite 빌드 결과물을 Nginx 루트로 복사
 
-# 최종 실행 명령어 (실제 실행 시에는 Nginx 등을 사용할 것이므로 불필요)
-CMD ["sh", "-c", "echo 'React build completed'"]
+# Nginx 설정 파일 복사
+COPY nginx.conf /etc/nginx/nginx.conf
+
+# 컨테이너 실행 시 Nginx 실행
+CMD ["nginx", "-g", "daemon off;"]

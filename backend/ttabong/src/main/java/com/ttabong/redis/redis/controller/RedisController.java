@@ -1,6 +1,6 @@
-package com.ttabong.redis.java.winter.com.redis.controller;
+package com.ttabong.redis.redis.controller;
 
-import com.ttabong.redis.java.winter.com.redis.service.RedisService;
+import com.ttabong.redis.redis.service.RedisService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
