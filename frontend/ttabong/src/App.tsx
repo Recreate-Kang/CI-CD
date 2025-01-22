@@ -2,7 +2,7 @@ import { useState } from 'react'
 import reactLogo from './assets/react.svg'
 import viteLogo from '/vite.svg'
 import './App.css'
-
+import StatusCheck from "./StatusCheck"
 function App() {
   const [count, setCount] = useState(0)
 
@@ -28,6 +28,7 @@ function App() {
       <p className="read-the-docs">
         Click on the Vite and React logos to learn more
       </p>
+      <StatusCheck /> {/* ✅ 백엔드 상태 확인 컴포넌트 추가 */}
     </>
   )
 }
