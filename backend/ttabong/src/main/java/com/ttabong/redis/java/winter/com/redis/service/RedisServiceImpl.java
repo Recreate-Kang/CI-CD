@@ -27,11 +27,12 @@ public class RedisServiceImpl implements RedisService {
 
     RedisServiceImpl(RedisTemplate<String, String> redisTemplate) {
         this.redisTemplate = redisTemplate;
-        this.redisTemplate.opsForStream().createGroup(SEARCH_KEYWORD_RANK, STREAM_CLIENT);
+        //this.redisTemplate.opsForStream().createGroup(SEARCH_KEYWORD_RANK, STREAM_CLIENT);
     }
 
     @Override
     public String searchKeyWord(String q) {
+        /*
         Long rankBefore = redisTemplate.opsForZSet().rank(SEARCH_KEYWORD_RANK, q);
         redisTemplate.opsForHash().putIfAbsent(SEARCH_KEYWORD_META, q, KeyWord.of(q));
         redisTemplate.opsForZSet().addIfAbsent(SEARCH_KEYWORD_RANK, q, 0);
@@ -40,9 +41,14 @@ public class RedisServiceImpl implements RedisService {
             updateRankingStream(rankingKeyWord());
         }
         return q;
+
+         */
+        System.out.println("happy~!!!!!!!!!!");
+        return "happy";
     }
 
     private void updateRankingStream(Object o) {
+        /*
         //MapRecord<String, String, Integer> record = MapRecord.create(SEARCH_KEYWORD_RANK,);
         Map<String, Integer> ranking = new HashMap<>();
         Set<String> redisRank = redisTemplate.opsForZSet().range(SEARCH_KEYWORD_RANK, 0, RANK_NUM);
@@ -52,6 +58,8 @@ public class RedisServiceImpl implements RedisService {
         });
         lastCreatedRanking = redisTemplate.opsForStream().add(MapRecord.create(SEARCH_KEYWORD_RANK, ranking));
         System.out.println(lastCreatedRanking);
+
+         */
     }
 
     public Object getupdatedRanking() {

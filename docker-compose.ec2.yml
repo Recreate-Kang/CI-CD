@@ -10,11 +10,11 @@ services:
       MYSQL_USER: user
       MYSQL_PASSWORD: password
     volumes:
-      - mysql_data:/var/lib/mysql # 데이터 지속성 유지
-    ports:
-      - "3306:3306"
+      - mysql_data:/var/lib/mysql
     networks:
       - internal # 내부 네트워크 연결
+    expose:
+      - "3306"  # 외부에서 접근 불가능, 내부 네트워크에서만 사용 가능
 
   rabbitmq:
     build: ./docker/rabbitmq
@@ -25,12 +25,12 @@ services:
       RABBITMQ_DEFAULT_USER: user
       RABBITMQ_DEFAULT_PASS: password
     volumes:
-      - rabbitmq_data:/var/lib/rabbitmq # 데이터 지속성 유지
-    ports:
-      - "5672:5672"
-      - "15672:15672"
+      - rabbitmq_data:/var/lib/rabbitmq
     networks:
-      - internal # 내부 네트워크 연결
+      - internal
+    expose:
+      - "5672"
+      - "15672"
 
   redis:
     build: ./docker/redis
@@ -38,16 +38,16 @@ services:
     container_name: redis_container
     restart: always
     volumes:
-      - redis_data:/data # 데이터 지속성 유지
-    ports:
-      - "6379:6379"
+      - redis_data:/data
     networks:
-      - internal # 내부 네트워크 연결
+      - internal
+    expose:
+      - "6379"
 
   backend:
     build:
-      context: ./backend/ttabong # 🔥 빌드 컨텍스트 명확하게 지정
-      dockerfile: Dockerfile # 🔥 사용할 Dockerfile 명시
+      context: ./backend/ttabong
+      dockerfile: Dockerfile
     image: custom-backend:latest
     container_name: backend_container
     environment:
@@ -57,10 +57,10 @@ services:
       - mysql
       - redis
       - rabbitmq
-    ports:
-      - "8080:8080"
     networks:
       - internal
+    expose:
+      - "8080"  # 외부에 직접 공개되지 않고 내부 네트워크에서만 접근 가능
 
   frontend:
     build:
@@ -68,10 +68,10 @@ services:
       dockerfile: Dockerfile
     image: frontend_builder
     container_name: frontend_builder
-    ports:
-      - "3000:3000"
     networks:
       - internal
+    expose:
+      - "3000"  # 외부 접근 차단, 내부에서만 접근 가능
 
   nginx:
     build:
@@ -84,16 +84,17 @@ services:
       - frontend
       - backend
     ports:
-      - "80:80" # HTTP 포트 공개
+      - "80:80"   # 외부에서 HTTP 접근 허용
+      - "443:443" # 외부에서 HTTPS 접근 허용 (필요 시)
     networks:
-      - external # 외부 네트워크 연결 (사용자 접근 가능)
-      - internal # 내부 네트워크 연결 (Backend, Frontend 연결)
+      - internal  # 내부 네트워크 연결 (Backend, Frontend 연결)
 
 networks:
   internal:
-    driver: bridge # 내부 네트워크
+    driver: bridge
+    internal: true  # 🔥 내부 네트워크이므로 외부 접근 차단
   external:
-    driver: bridge # 외부 네트워크
+    driver: bridge  # 🔥 외부에서 접근 가능 (nginx만 연결)
 
 volumes:
   mysql_data:
