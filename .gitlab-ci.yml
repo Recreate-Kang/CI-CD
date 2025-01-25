@@ -21,7 +21,7 @@ test-frontend:
   image: node:16-alpine  # Node.js와 npm이 포함된 이미지 사용
   script:
     - echo "🛠️ Running Frontend Unit Tests"
-    - cd frontend
+    - cd frontend/ttabong
     - npm ci
     - npm run test
 
@@ -40,7 +40,7 @@ test-backend:
   image: gradle:7.5-jdk17  # Gradle이 포함된 이미지 사용
   script:
     - echo "🛠️ Running Backend Unit Tests"
-    - cd backend
+    - cd backend/ttabong
     - ./gradlew test --build-cache
 
 # 2️⃣ dev 브랜치 → 빌드 & 단위 테스트 + 도커 빌드 + 배포 (캐싱 적용)
@@ -50,8 +50,8 @@ build-and-test-dev:
     - dev
   script:
     - echo "🛠️ Building and Testing for dev branch"
-    - cd backend && ./gradlew build --build-cache
-    - cd ../frontend && npm run build
+    - cd backend/ttabong && ./gradlew build --build-cache
+    - cd ../frontend/ttabong && npm run build
     - echo "✅ All tests passed!"
 
 docker-build-dev:
