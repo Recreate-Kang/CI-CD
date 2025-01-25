@@ -1,0 +1,9 @@
+concurrent = 1
+check_interval = 0
+
+[[runners]]
+  name = "recreate-runner"
+  url = "https://lab.ssafy.com"
+  token = "glrt-t3_-QsqzG3UchQbdG_nZUsY"
+  executor = "docker"
+  limit = 2
