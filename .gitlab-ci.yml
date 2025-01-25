@@ -1,6 +1,91 @@
-create_file:
-  image: alpine
+stages:
+  - test
+  - build
+  - deploy
+
+# 캐시 설정
+cache:
+  key: global-cache
+  paths:
+    - frontend/node_modules/
+    - backend/.gradle/caches/
+    - backend/.gradle/wrapper/
+    - backend/build/
+
+# 1️⃣ Frontend와 Backend 테스트 (각각의 브랜치에서)
+test-frontend:
+  stage: test
+  only:
+    - /^.*-FRONT\/.*$/
+    - dev  # dev 브랜치에서도 실행되도록 추가
+  image: node:16-alpine  # Node.js와 npm이 포함된 이미지 사용
   script:
-    - echo "Building..."
-    - mkdir build
-    - touch build/somefile.txt
+    - echo "🛠️ Running Frontend Unit Tests"
+    - cd frontend/ttabong
+    - npm ci
+    - npm run test
+
+test-backend:
+  stage: test
+  only:
+    - /^.*-BACK\/.*$/
+    - dev  # dev 브랜치에서도 실행되도록 추가
+  services:
+    - name: mysql:8.0
+      alias: mysql
+    - name: redis:7.4.0
+      alias: redis
+    - name: rabbitmq:3.12
+      alias: rabbitmq
+  image: gradle:7.5-jdk17  # Gradle이 포함된 이미지 사용
+  script:
+    - echo "🛠️ Running Backend Unit Tests"
+    - cd backend/ttabong
+    - ./gradlew test --build-cache
+
+# 2️⃣ dev 브랜치 → 빌드 & 단위 테스트 + 도커 빌드 + 배포 (캐싱 적용)
+build-and-test-dev:
+  stage: build
+  only:
+    - dev
+  script:
+    - echo "🛠️ Building and Testing for dev branch"
+    - cd backend/ttabong && ./gradlew build --build-cache
+    - cd ../frontend/ttabong && npm run build
+    - echo "✅ All tests passed!"
+
+docker-build-dev:
+  stage: build
+  only:
+    - dev
+  script:
+    - echo "🐳 Building Docker images for dev"
+    - docker-compose -f docker-compose.yml build
+
+deploy-dev:
+  stage: deploy
+  only:
+    - dev
+  script:
+    - echo "🚀 Deploying to dev environment"
+    - docker-compose -f docker-compose.override.yml up -d
+    - echo "✅ dev deployment successful!"
+
+# 3️⃣ MASTER 브랜치 → 도커 빌드 + 최종 배포 (캐싱 적용)
+docker-build-master:
+  stage: build
+  only:
+    - master
+  script:
+    - echo "🐳 Building Docker images for MASTER"
+    - docker-compose -f docker-compose.yml build
+
+deploy-master:
+  stage: deploy
+  only:
+    - master
+  script:
+    - echo "🚀 Deploying to Production!"
+    - docker-compose -f docker-compose.prod.yml up -d
+    - echo "✅ Production deployment successful!"
+
