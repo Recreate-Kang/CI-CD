@@ -1,13 +1,9 @@
-# Nginx 컨테이너
+# 2️⃣ Nginx를 이용해 정적 파일 서빙
 FROM nginx:1.21.3-alpine
 WORKDIR /usr/share/nginx/html
 
-# 기존 Nginx 기본 설정 제거 후 새로운 설정 추가
-RUN rm -rf ./*
-COPY nginx.conf /etc/nginx/nginx.conf
-
-# Vue 빌드 결과물 복사
-COPY --from=frontend_builder /output ./
+# Nginx 설정 파일 복사
+COPY ./local_nginx.conf /etc/nginx/nginx.conf
 
 # 컨테이너 실행 시 Nginx 실행
 CMD ["nginx", "-g", "daemon off;"]

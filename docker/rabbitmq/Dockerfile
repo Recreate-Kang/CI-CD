@@ -2,8 +2,8 @@
 FROM rabbitmq:3.12-management
 
 # 환경 변수 설정
-ENV RABBITMQ_DEFAULT_USER=user
-ENV RABBITMQ_DEFAULT_PASS=password
+ENV RABBITMQ_DEFAULT_USER=ddabong
+ENV RABBITMQ_DEFAULT_PASS=707
 
 # 데이터 지속성 유지
 VOLUME ["/var/lib/rabbitmq"]
