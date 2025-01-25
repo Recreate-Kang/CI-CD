@@ -3,6 +3,7 @@ stages:
   - build
   - deploy
 
+# 캐시 설정
 cache:
   key: global-cache
   paths:
@@ -11,16 +12,17 @@ cache:
     - backend/.gradle/wrapper/
     - backend/build/
 
-# 1️⃣ FRONT:*, BACK:* 브랜치 → 빌드 & 단위 테스트 (캐싱 적용)
+# 1️⃣ Frontend와 Backend 테스트 (각각의 브랜치에서)
 test-frontend:
   stage: test
   only:
     - /^.*-FRONT\/.*$/
     - dev  # dev 브랜치에서도 실행되도록 추가
+  image: node:16-alpine  # Node.js와 npm이 포함된 이미지 사용
   script:
     - echo "🛠️ Running Frontend Unit Tests"
     - cd frontend
-    - npm ci  # `npm install` 대신 `npm ci` 사용 (더 빠름)
+    - npm ci
     - npm run test
 
 test-backend:
@@ -35,10 +37,11 @@ test-backend:
       alias: redis
     - name: rabbitmq:3.12
       alias: rabbitmq
+  image: gradle:7.5-jdk17  # Gradle이 포함된 이미지 사용
   script:
     - echo "🛠️ Running Backend Unit Tests"
     - cd backend
-    - ./gradlew test --build-cache  # Gradle 빌드 캐시 활성화
+    - ./gradlew test --build-cache
 
 # 2️⃣ dev 브랜치 → 빌드 & 단위 테스트 + 도커 빌드 + 배포 (캐싱 적용)
 build-and-test-dev:
@@ -56,7 +59,7 @@ docker-build-dev:
   only:
     - dev
   script:
-    - echo "🐳 Building Docker images for dev with cache"
+    - echo "🐳 Building Docker images for dev"
     - docker-compose -f docker-compose.yml build
 
 deploy-dev:
@@ -74,7 +77,7 @@ docker-build-master:
   only:
     - master
   script:
-    - echo "🐳 Building Docker images for MASTER with cache"
+    - echo "🐳 Building Docker images for MASTER"
     - docker-compose -f docker-compose.yml build
 
 deploy-master:
