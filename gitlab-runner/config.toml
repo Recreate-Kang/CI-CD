@@ -7,3 +7,8 @@ check_interval = 0
   token = "glrt-t3_-QsqzG3UchQbdG_nZUsY"
   executor = "docker"
   limit = 2
+  environment = ["DOCKER_HOST=tcp://docker-dind:2375"]
+    [runners.docker]
+    image = "alpine:latest"
+    privileged = true
+    volumes = ["/cache", "/var/run/docker.sock:/var/run/docker.sock"]
